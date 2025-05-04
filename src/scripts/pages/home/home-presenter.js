@@ -1,0 +1,43 @@
+export default class HomePresenter {
+    #view;
+    #model;
+
+    constructor({ view, model }) {
+        this.#view = view;
+        this.#model = model;
+    }
+
+    // async showImgHome() {
+    //     this.#view.showImgHomeLoading();
+
+    //     try {
+    //         await this.#view.imgHome();
+    //     } catch(error) {
+    //         console.error('showImgHome: error: ', error);
+    //     } finally {
+    //         this.#view.hideImgHomeLoading();
+    //     }
+    // }
+
+    async showHomePage() {
+        this.#view.showLoading();
+
+        try {
+            // await this.showImgHome();
+            const response = await this.#model.getAllStory();
+    
+            if (!response.ok) {
+                console.error('showHomePage: response: ', response);
+                this.#view.populateStoryError(response.message);
+                return;
+            }
+
+            this.#view.populateStoryList(response.message, response.listStory);
+        } catch(error) {
+            console.error('showStoryList: error: ', error);
+            this.#view.populateStoryError(error.message);
+        } finally {
+            this.#view.hideLoading();
+        }
+    }
+}
