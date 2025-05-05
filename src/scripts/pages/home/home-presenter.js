@@ -6,24 +6,11 @@ export default class HomePresenter {
         this.#view = view;
         this.#model = model;
     }
-
-    // async showImgHome() {
-    //     this.#view.showImgHomeLoading();
-
-    //     try {
-    //         await this.#view.imgHome();
-    //     } catch(error) {
-    //         console.error('showImgHome: error: ', error);
-    //     } finally {
-    //         this.#view.hideImgHomeLoading();
-    //     }
-    // }
-
+    
     async showHomePage() {
         this.#view.showLoading();
 
         try {
-            // await this.showImgHome();
             const response = await this.#model.getAllStory();
     
             if (!response.ok) {

@@ -51,17 +51,13 @@ export default class App {
 
   #setupNavigationList() {
     const isLogin = !!getAccessToken();
-    const navListMain = this.#drawerNavigation.children.namedItem('navlist-main');
     const navList = this.#drawerNavigation.children.namedItem('navlist');
 
     // User not log in
     if (!isLogin) {
-      navListMain.innerHTML = '';
       navList.innerHTML = generateUnauthenticatedNavigationListTemplate();
       return;
     }
-
-    navListMain.innerHTML = generateMainNavigationListTemplate();
     navList.innerHTML = generateAuthenticatedNavigationListTemplate();
 
     const logoutButton = document.getElementById('logout-button');
@@ -71,7 +67,6 @@ export default class App {
       if (confirm('Apakah Anda yakin ingin keluar?')) {
         getLogout();
 
-        // Redirect
         location.hash = '/login';
       }
     });
@@ -80,18 +75,30 @@ export default class App {
   async renderPage() {
     const url = getActiveRoute();
     const route = routes[url];
-
-    // Get page instance
+  
+    if (!route) {
+      this.#content.innerHTML = '<p>Halaman tidak ditemukan.</p>';
+      return;
+    }
+  
     const page = route();
-
+  
     const transition = transitionHelper({
       updateDOM: async () => {
-        this.#content.innerHTML = await page.render();
-        page.afterRender();
+        const html = await page.render();
+        if (!this.#content) return;
+  
+        this.#content.innerHTML = html;
+        if (typeof page.afterRender === 'function') {
+          page.afterRender();
+        }
       },
     });
-
-    transition.ready.catch(console.error);
+  
+    transition.ready.catch((err) => {
+      console.error('Transition failed:', err);
+    });
+  
     transition.updateCallbackDone.then(() => {
       scrollTo({ top: 0, behavior: 'instant' });
       this.#setupNavigationList();

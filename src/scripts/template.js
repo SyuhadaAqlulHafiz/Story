@@ -16,12 +16,6 @@ export function generateLoaderAbsoluteTemplate() {
 
 
 /* Start template navigation */
-export function generateMainNavigationListTemplate() {
-  return `
-    <li><a id="story-list-button" class="story-list-button" href="#/">Home</a></li>
-  `;
-}
-
 export function generateUnauthenticatedNavigationListTemplate() {
   return `
     <li><a id="login-button" href="#/login">Login</a></li>
@@ -31,7 +25,7 @@ export function generateUnauthenticatedNavigationListTemplate() {
 
 export function generateAuthenticatedNavigationListTemplate() {
   return `
-    <li><a id="new-story-button" class="btn new-story-button" href="#/add"> Buat Story <i class="fas fa-plus"></i></a></li>
+    <li><a id="new-story-button" class="btn new-story-button" href="#/add"> Buat Story Baru <i class="fas fa-plus"></i></a></li>
     <li><a id="logout-button" class="logout-button" href="#/logout"><i class="fas fa-sign-out-alt"></i> Logout </a></li>
   `;
 }
@@ -178,37 +172,4 @@ export function generateDetailTemplate({
         </div>
     `;
 }
-/* Start template detail page */
-
-
-// export function generateSubscribeButtonTemplate() {
-//   return `
-//     <button id="subscribe-button" class="btn subscribe-button">
-//       Subscribe <i class="fas fa-bell"></i>
-//     </button>
-//   `;
-// }
-
-// export function generateUnsubscribeButtonTemplate() {
-//   return `
-//     <button id="unsubscribe-button" class="btn unsubscribe-button">
-//       Unsubscribe <i class="fas fa-bell-slash"></i>
-//     </button>
-//   `;
-// }
-
-// export function generateSaveReportButtonTemplate() {
-//   return `
-//     <button id="report-detail-save" class="btn btn-transparent">
-//       Simpan story <i class="far fa-bookmark"></i>
-//     </button>
-//   `;
-// }
-
-// export function generateRemoveReportButtonTemplate() {
-//   return `
-//     <button id="report-detail-remove" class="btn btn-transparent">
-//       Buang story <i class="fas fa-bookmark"></i>
-//     </button>
-//   `;
-// }
+/* end template detail page */

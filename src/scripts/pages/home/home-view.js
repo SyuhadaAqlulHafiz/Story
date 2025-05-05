@@ -14,12 +14,12 @@ export default class HomePage {
   async render() {
     return `
       <section class="container">
-          <h1 class="section-title">Daftar Story Orang Pusing</h1>
+        <h1 class="section-title">Daftar Story Orang Pusing</h1>
 
-          <div class="story-list__container">
-            <div id="story-list"></div>
-            <div id="story-list-loading-container"></div>
-          </div>
+        <div class="story-list__container">
+          <div id="story-list"></div>
+          <div id="story-list-loading-container"></div>
+        </div>
       </section>
     `;
   }

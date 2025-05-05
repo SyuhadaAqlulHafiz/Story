@@ -104,7 +104,7 @@ export default class Camera {
         },
       });
 
-      // Show available camera after camera permission granted
+      
       await this.#populateDeviceList(stream);
 
       return stream;
@@ -116,13 +116,20 @@ export default class Camera {
 
   async launch() {
     this.#currentStream = await this.#getStream();
-
-    // Record all MediaStream in global context
+  
     Camera.addNewStream(this.#currentStream);
-
+  
     this.#videoElement.srcObject = this.#currentStream;
+  
+    await new Promise((resolve) => {
+      this.#videoElement.onloadedmetadata = () => {
+        this.#width = this.#videoElement.videoWidth;
+        this.#height = this.#videoElement.videoHeight;
+        resolve();
+      };
+  });
+  
     this.#videoElement.play();
-
     this.#clearCanvas();
   }
 
@@ -149,18 +156,24 @@ export default class Camera {
 
   async takePicture() {
     if (!(this.#width && this.#height)) {
+      console.error("Ukuran kamera belum diatur.");
       return null;
     }
-
+  
     const context = this.#canvasElement.getContext('2d');
-
     this.#canvasElement.width = this.#width;
     this.#canvasElement.height = this.#height;
-
+  
     context.drawImage(this.#videoElement, 0, 0, this.#width, this.#height);
-
-    return await new Promise((resolve) => {
-      this.#canvasElement.toBlob((blob) => resolve(blob));
+  
+    return await new Promise((resolve, reject) => {
+      this.#canvasElement.toBlob((blob) => {
+        if (blob) {
+          resolve(blob);
+        } else {
+          reject(new Error("Gagal membuat Blob dari canvas."));
+        }
+      }, 'image/png');
     });
   }
 

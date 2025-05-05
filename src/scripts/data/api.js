@@ -10,8 +10,8 @@ const ENDPOINTS = {
 };
 
 
-export async function getRegister({ nama, email, password}) {
-  const response = JSON.stringify({ nama, email, password});
+export async function getRegister({ name, email, password}) {
+  const response = JSON.stringify({ name, email, password});
 
   const fetchResponse = await fetch(ENDPOINTS.REGIST, {
     method: 'POST',
@@ -41,7 +41,7 @@ export async function getLogin({ email, password }) {
 
   return {
     ...json,
-    ok: fetchResponse,
+    ok: fetchResponse.ok,
   }
 }
 

@@ -18,7 +18,7 @@ export async function createCarousel(containerElement, options = {}) {
     container: containerElement,
     mouseDrag: true,
     swipeAngle: false,
-    speed: 600,
+    speed: 700,
 
     nav: true,
     navPosition: 'bottom',
@@ -30,9 +30,6 @@ export async function createCarousel(containerElement, options = {}) {
   });
 }
 
-/**
- * Ref: https://stackoverflow.com/questions/18650168/convert-blob-to-base64
- */
 export function convertBlobToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -46,6 +43,13 @@ export function convertBlobToBase64(file) {
  * Ref: https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
  */
 export function convertBase64ToBlob(base64Data, contentType = '', sliceSize = 512) {
+  // Buang prefix jika ada (contoh: "data:image/png;base64,")
+  const matches = base64Data.match(/^data:(.+);base64,(.*)$/);
+  if (matches) {
+    contentType = matches[1];
+    base64Data = matches[2];
+  }
+
   const byteCharacters = atob(base64Data);
   const byteArrays = [];
 

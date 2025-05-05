@@ -19,9 +19,9 @@ export default class AddNewStoryPage {
             <section>
                 <div class="new-story__header">
                     <div class="container">
-                        <h1 class="new-story__header__title">Buat Laporan Baru</h1>
+                        <h1 class="new-story__header__title">Buat Story Baru</h1>
                         <p class="new-story__header__description">
-                        Silakan lengkapi formulir di bawah untuk membuat laporan baru.<br>
+                        Silakan lengkapi formulir di bawah untuk membuat story baru.<br>
                         Pastikan laporan yang dibuat adalah valid.
                         </p>
                     </div>
@@ -66,7 +66,7 @@ export default class AddNewStoryPage {
                                         <select id="camera-select"></select>
                                         <div class="new-form__camera__tools_buttons">
                                             <button id="camera-take-button" class="btn" type="button">
-                                                Ambil Gambar
+                                                Tangkap Gambar
                                             </button>
                                         </div>
                                     </div>
@@ -83,7 +83,7 @@ export default class AddNewStoryPage {
                                 <textarea
                                 id="description-input"
                                 name="description"
-                                placeholder="Masukkan keterangan lengkap laporan. Anda dapat menjelaskan apa kejadiannya, dimana, kapan, dll."
+                                placeholder="Masukkan caption story! Anda dapat menjelaskan apa kejadiannya, dimana, kapan, dll."
                                 ></textarea>
                             </div>
                         </div>
@@ -212,6 +212,14 @@ export default class AddNewStoryPage {
 
         this.#camera.addCheeseButtonListener('#camera-take-button', async () => {
             const image = await this.#camera.takePicture();
+        
+            if (!image) {
+                console.error("Tidak berhasil mengambil gambar dari kamera.");
+                alert("Gagal mengambil gambar dari kamera. Coba lagi.");
+                return;
+            }
+            
+            console.log('[DEBUG] Hasil takePicture:', image); 
             await this.#addTakenPicture(image);
             await this.#populateTakenPicture();
         });
@@ -220,21 +228,26 @@ export default class AddNewStoryPage {
     async #addTakenPicture(image) {
         let blob = image;
     
-        if (image instanceof String) {
-          blob = await convertBase64ToBlob(image, 'image/png');
+        if (typeof image === 'string' && image.startsWith('data:image')) {
+            const base64Data = image.split(',')[1];
+            blob = await convertBase64ToBlob(base64Data, 'image/png');
+          }
+    
+        if (!blob || !(blob instanceof Blob)) {
+            console.error("Gagal membuat Blob dari gambar:", blob);
+            this.#takenDocumentations = null;
+            return;
         }
     
         this.#takenDocumentations = {
-          id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-          blob: blob,
+            id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+            blob: blob,
         };
+        console.log('[DEBUG] Hasil takePicture:', image); 
     }
 
     async #populateTakenPicture() {
-        if (!this.#takenDocumentations || !this.#takenDocumentations.blob) {
-            console.error("Error: Blob tidak tersedia!", this.#takenDocumentations);
-            return;
-        }
+        
     
         const image = URL.createObjectURL(this.#takenDocumentations.blob);
         const imageContainer = document.getElementById("documentations-taken-list");
@@ -249,7 +262,14 @@ export default class AddNewStoryPage {
             `;
             document.getElementById("delete-picture-button").addEventListener("click", () => {
                 this.#removePicture();
-                this.#populateTakenPicture();
+            
+                const hasPicture = this.#takenDocumentations && this.#takenDocumentations.blob instanceof Blob;
+                if (hasPicture) {
+                  this.#populateTakenPicture();
+                } else {
+                  const container = document.getElementById("documentations-taken-list");
+                  if (container) container.innerHTML = "";
+                }
             });
         } else {
             console.error("Elemen #image-taken tidak ditemukan di DOM.");

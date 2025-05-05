@@ -8,7 +8,7 @@ export default class RegisterPage {
         return `
             <section class="register-container">
                 <div class="register-form-container">
-                <h1 class="register__title">Daftar akun</h1>
+                <h1 class="register__title">Daftar Akun</h1>
 
                 <form id="register-form" class="register-form">
                     <div class="form-control">
@@ -56,12 +56,22 @@ export default class RegisterPage {
         document.getElementById('register-form').addEventListener('submit', async (event) => {
             event.preventDefault();
 
+            
             const data = {
                 name: document.getElementById('name-input').value,
                 email: document.getElementById('email-input').value,
                 password: document.getElementById('password-input').value,
             };
-
+            
+            if (!data.name || !data.email || !data.password) {
+                alert('Semua field wajib diisi!');
+                return;
+            }
+            if (data.password.length < 8) {
+                alert('Password minimal 8 karakter!');
+                return;
+            }
+            
             await this.#presenter.getRegister(data);
         });
     }
